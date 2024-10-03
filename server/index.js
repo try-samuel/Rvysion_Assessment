@@ -19,8 +19,6 @@ app.use(
       "https://rvysion-assessment-frontend.vercel.app", // Deployed frontend
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Specify allowed methods
-    allowedHeaders: ["Content-Type"], // Specify allowed headers
-    credentials: true, // Allow credentials if needed
   })
 );
 
