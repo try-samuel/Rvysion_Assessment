@@ -14,7 +14,10 @@ const __dirname = path.dirname(__filename);
 // Middleware to enable CORS
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:3000",
+      "https://rvysion-assessment-frontend.vercel.app/",
+    ],
   })
 );
 
