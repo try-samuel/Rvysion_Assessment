@@ -12,7 +12,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware to enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // Middleware to parse JSON bodies
 app.use(express.json());
