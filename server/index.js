@@ -19,6 +19,7 @@ app.use(
       "https://rvysion-assessment-frontend.vercel.app", // Deployed frontend
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Specify allowed methods
+    credentials: true, // Allow credentials if needed
   })
 );
 
@@ -37,7 +38,7 @@ async function loadProducts() {
 }
 
 // Product list endpoint
-app.get("/api/products", async (req, res) => {
+app.get("/api/products", async (_, res) => {
   try {
     const products = await loadProducts();
     res.json(products);
@@ -88,7 +89,7 @@ app.get("/api/products/:id", async (req, res) => {
 });
 
 // Handle preflight requests for CORS
-app.options("*", cors()); // Handle all OPTIONS preflight requests
+app.options("*", cors({ origin: true, credentials: true })); // Handle all OPTIONS preflight requests
 
 // Start server
 app.listen(PORT, () => {
