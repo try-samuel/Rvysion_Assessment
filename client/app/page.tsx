@@ -4,11 +4,23 @@ import AutoResizingGrid from "@/components/AutoResizingGrid/AutoResizingGrid";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Product } from "./types/types";
+import { fetchProducts } from "@/services/data";
 
 export default function Home() {
   const [data, setData] = useState<Product[]>([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const products = await fetchProducts();
+        setData(products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="space-y-5 my-5 p-2">

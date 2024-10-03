@@ -4,7 +4,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchProducts = async (): Promise<Product[]> => {
   try {
-    const response = await fetch(`${baseUrl}/api/products/search`, {
+    const response = await fetch(`${baseUrl}/api/products/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
