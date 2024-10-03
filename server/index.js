@@ -15,9 +15,12 @@ const __dirname = path.dirname(__filename);
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",
-      "https://rvysion-assessment-frontend.vercel.app/",
+      "http://localhost:3000", // Local development frontend
+      "https://rvysion-assessment-frontend.vercel.app", // Deployed frontend
     ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Specify allowed methods
+    allowedHeaders: ["Content-Type"], // Specify allowed headers
+    credentials: true, // Allow credentials if needed
   })
 );
 
@@ -26,47 +29,70 @@ app.use(express.json());
 
 // Load product data from JSON file
 async function loadProducts() {
-  const filePath = path.join(__dirname, "products.json");
-  const data = await readFile(filePath, "utf8");
-  return JSON.parse(data);
+  try {
+    const filePath = path.join(__dirname, "products.json");
+    const data = await readFile(filePath, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    throw new Error("Error loading product data");
+  }
 }
 
 // Product list endpoint
 app.get("/api/products", async (req, res) => {
-  const products = await loadProducts();
-  res.json(products);
+  try {
+    const products = await loadProducts();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Product search endpoint
 app.get("/api/products/search", async (req, res) => {
   const { query } = req.query;
-  const products = await loadProducts();
 
-  if (typeof query !== "string") {
+  if (!query || typeof query !== "string") {
     return res.status(400).json({ error: "Invalid search query" });
   }
 
-  const results = products.filter((product) =>
-    product.name.toLowerCase().includes(query.toLowerCase())
-  );
-
-  res.json(results);
+  try {
+    const products = await loadProducts();
+    const results = products.filter((product) =>
+      product.name.toLowerCase().includes(query.toLowerCase())
+    );
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Single product view endpoint
 app.get("/api/products/:id", async (req, res) => {
   const { id } = req.params;
-  const products = await loadProducts();
 
-  const product = products.find((p) => p.id === parseInt(id));
-
-  if (!product) {
-    return res.status(404).json({ error: "Product not found" });
+  if (!id || isNaN(id)) {
+    return res.status(400).json({ error: "Invalid product ID" });
   }
 
-  res.json(product);
+  try {
+    const products = await loadProducts();
+    const product = products.find((p) => p.id === parseInt(id));
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
+// Handle preflight requests for CORS
+app.options("*", cors()); // Handle all OPTIONS preflight requests
+
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
