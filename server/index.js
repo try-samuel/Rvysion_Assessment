@@ -1,17 +1,25 @@
-// File: server.ts
 import express from "express";
+import cors from "cors";
 import { readFile } from "fs/promises";
+import { fileURLToPath } from "url";
 import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Middleware to enable CORS
+app.use(cors());
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
 // Load product data from JSON file
 async function loadProducts() {
-  const filePath = path.join(__dirname, "data", "products.json");
+  const filePath = path.join(__dirname, "products.json");
   const data = await readFile(filePath, "utf8");
   return JSON.parse(data);
 }
