@@ -16,6 +16,12 @@ async function loadProducts() {
   return JSON.parse(data);
 }
 
+// Product list endpoint
+app.get("/api/products", async (req, res) => {
+  const products = await loadProducts();
+  res.json(products);
+});
+
 // Product search endpoint
 app.get("/api/products/search", async (req, res) => {
   const { query } = req.query;
